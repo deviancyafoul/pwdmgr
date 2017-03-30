@@ -2,6 +2,7 @@ package com.foobar.pwdmgr;
 
 
 import java.sql.*;
+import java.util.Optional;
 import java.util.Properties;
 
 /**
@@ -76,19 +77,26 @@ public class Database {
     }
 
 
-    public boolean authenticate(String userName, String password){
+    public Optional<User> authenticate(String userName, String password){
         try (Connection conn = DriverManager.getConnection(JDBC_URL,connectionProps)){
-            PreparedStatement stmt = conn.prepareStatement("select password from users where userName = ?");
+            PreparedStatement stmt = conn.prepareStatement("select * from users where userName = ?");
             stmt.setString(1,userName);
             ResultSet resultSet = stmt.executeQuery();
             resultSet.next();
             String candidatePassword = resultSet.getString("password");
-            return User.isPasswordValid(userName, password, candidatePassword);
+            int candidateId = resultSet.getInt("id");
+            String candidateUserName = resultSet.getString("username");
+            if(User.isPasswordValid(userName, password, candidatePassword)){
+                return Optional.of(new User(candidateId, candidateUserName, candidatePassword));
+            } else {
+                return Optional.empty();
+            }
+
         } catch(SQLException e){
             e.printStackTrace();
             System.exit(1);
         }
-        return false;
+        return Optional.empty();
     }
 }
 

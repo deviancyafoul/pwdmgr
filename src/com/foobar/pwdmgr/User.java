@@ -1,6 +1,7 @@
 package com.foobar.pwdmgr;
 
 import sun.jvm.hotspot.runtime.Bytes;
+import sun.plugin2.message.Message;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -20,6 +21,10 @@ public class User {
         this.password = hashPassword(userName, password);
     }
 
+    public User(int id, String userName, String password){
+        this(userName, password);
+        this.id = id;
+    }
 
     public String getUserName(){
         return userName;
@@ -41,16 +46,12 @@ public class User {
         this.id = id;
     }
 
+
     static String hashPassword(String userName, String password){
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            md.update(userName.getBytes("UTF-8"));
-            md.update(password.getBytes("UTF-8"));
-            return new String(md.digest());
-        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-            System.exit(255);
-        }
-        return null;
+        MessageDigest md = Util.messageDigestSupplier.get();
+        Util.hashFunction.accept(md,userName);
+        Util.hashFunction.accept(md,password);
+        return new String(md.digest());
     }
 
     public static boolean isPasswordValid(String userName, String password, String candidatePassword){

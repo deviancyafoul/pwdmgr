@@ -1,5 +1,6 @@
 package com.foobar.pwdmgr;
 
+import java.util.Optional;
 import java.util.Scanner;
 
 /**
@@ -29,11 +30,13 @@ public class Main {
         String userName = keyboard.nextLine();
         System.out.println("Please enter your password");
         String password = keyboard.nextLine();
-        while(!database.authenticate(userName, password)){
+        Optional<User> user = database.authenticate(userName, password);
+        while(!user.isPresent()){
             System.out.println("Please enter your username");
             userName = keyboard.nextLine();
             System.out.println("Please enter your password");
             password = keyboard.nextLine();
+            user = database.authenticate(userName, password);
         }
         System.out.println("Authenticated");
         System.out.println("Press 1 for Site Search.\nPress 2 for New Site.");
@@ -43,14 +46,14 @@ public class Main {
             answer = keyboard.nextLine();
         }
         if("2".equals(answer)){
-            createNewSite(database, keyboard, userName, password);
+            createNewSite(database, keyboard, user.get());
         }
         return answer;
     }
 
-    private static void createNewSite(Database database, Scanner keyboard, String userName, String password) {
-        User currentUser = new User(userName, password);
-        int userId = database.getUserId(currentUser);
+    private static void createNewSite(Database database, Scanner keyboard, User currentUser) {
+
+        int userId = currentUser.getID();
         System.out.println("Please enter site address:");
         String website = keyboard.nextLine();
         System.out.println("Please enter the username:");
