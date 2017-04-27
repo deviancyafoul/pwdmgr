@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.Optional;
 import java.util.Properties;
 
+
 /**
  * Created by alisaarnold on 2/9/17.
  */
@@ -86,7 +87,7 @@ public class Database {
             String candidatePassword = resultSet.getString("password");
             int candidateId = resultSet.getInt("id");
             String candidateUserName = resultSet.getString("username");
-            if(User.isPasswordValid(userName, password, candidatePassword)){
+            if(User.bIsPasswordValid(password, candidatePassword)){
                 return Optional.of(new User(candidateId, candidateUserName, candidatePassword));
             } else {
                 return Optional.empty();

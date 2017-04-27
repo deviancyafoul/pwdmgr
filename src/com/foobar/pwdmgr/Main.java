@@ -39,10 +39,15 @@ public class Main {
             user = database.authenticate(userName, password);
         }
         System.out.println("Authenticated");
-        System.out.println("Press 1 for Site Search.\nPress 2 for New Site.");
+        return siteSearch(database, keyboard, user);
+    }
+
+    private static String siteSearch(Database database, Scanner keyboard, Optional<User> user) {
+        String answer;
+        System.out.println("Press 1 for Site Search.\nPress 2 for New Site.\nPress 3 to Logout.");
         answer = keyboard.nextLine();
-        while(!"1".equals(answer) && !"2".equals(answer)){
-            System.out.println("Press 1 for Site Search.\nPress 2 for New Site.");
+        while(!"1".equals(answer) && !"2".equals(answer) && "3".equals(answer)){
+            System.out.println("Press 1 for Site Search.\nPress 2 for New Site.\nPress 3 to Logout");
             answer = keyboard.nextLine();
         }
         if("2".equals(answer)){
