@@ -1,5 +1,7 @@
 package com.foobar.pwdmgr;
 
+import com.foobar.pwdmgr.Database;
+
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -58,15 +60,14 @@ public class Main {
 
     private static void createNewSite(Database database, Scanner keyboard, User currentUser) {
 
-        int userId = currentUser.getID();
         System.out.println("Please enter site address:");
         String website = keyboard.nextLine();
         System.out.println("Please enter the username:");
         String loginUserName = keyboard.nextLine();
         System.out.println("Please enter the password:");
         String loginPswd = keyboard.nextLine();
-        Login newLogin = new Login(userId, website, loginUserName, loginPswd);
-        database.addLogin(newLogin);
+        Login newLogin = new Login(currentUser, website, loginUserName, loginPswd);
+        //database.addLogin(newLogin);
     }
 
     private static void createUser(Database database, Scanner keyboard) {

@@ -1,0 +1,60 @@
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'org.liquibase.gradle'
+apply plugin: 'idea'
+
+
+sourceCompatibility = 1.8
+mainClassName = 'com.foobar.pwdmgr.Main'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies{
+        classpath "org.postgresql:postgresql:42.0.0"
+        classpath "org.liquibase:liquibase-core"
+        classpath "org.liquibase:liquibase-gradle-plugin:1.2.4"
+    }
+
+}
+
+liquibase{
+    activities {
+        Properties props = new Properties()
+        props.load(new FileInputStream("liquibase.properties"))
+
+        migration{
+            changeLogFile "src/main/resources/liquibase-changelog.xml"
+            url props.url
+            username props.username
+            password props.password
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.postgresql:postgresql:42.0.0'
+    compile 'org.mindrot:jbcrypt:0.4'
+    testCompile 'junit:junit:4.11'
+}
+
+run.standardInput = System.in
+
+
+sourceSets {
+    main{
+        java {
+            srcDirs = ["src"]
+        }
+    }
+
+}
+
+task wrapper(type: Wrapper){
+    gradleVersion = '3.5'
+}

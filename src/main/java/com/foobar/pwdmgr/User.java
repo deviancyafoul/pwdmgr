@@ -44,23 +44,25 @@ public class User {
     }
 
 
-    static String hashPassword(String userName, String password){
-        MessageDigest md = Util.messageDigestSupplier.get(); //This get the array from messageDigestSupplier that the SHA-256 encryption was set to.
-        Util.hashFunction.accept(md,userName); //This accepts the userName as a salt for the password and hashes it.
-        Util.hashFunction.accept(md,password); //This accepts the password and adds to to the digest to be hashed.
-        return new String(md.digest()); //This combines the username/salt with the hashed password to create a new hashed password in hexidecimal format for security.
-    }
+//    static String hashPassword(String userName, String password){
+//        MessageDigest md = Util.messageDigestSupplier.get(); //This get the array from messageDigestSupplier that the SHA-256 encryption was set to.
+//        Util.hashFunction.accept(md,userName); //This accepts the userName as a salt for the password and hashes it.
+//        Util.hashFunction.accept(md,password); //This accepts the password and adds to to the digest to be hashed.
+//        return new String(md.digest()); //This combines the username/salt with the hashed password to create a new hashed password in hexidecimal format for security.
+//    }
 
     static String bHashPassword(String password){
-        return BCrypt.hashpw(password, BCrypt.gensalt(12));
+       return BCrypt.hashpw(password, BCrypt.gensalt(12));
+        //return null;
     }
 
-    public static boolean isPasswordValid(String userName, String password, String candidatePassword){
-        return hashPassword(userName, password).equals(candidatePassword);
-    }
+//    public static boolean isPasswordValid(String userName, String password, String candidatePassword){
+//        return hashPassword(userName, password).equals(candidatePassword);
+//    }
 
     public static boolean bIsPasswordValid(String hashed, String candidate){
-        return BCrypt.checkpw(hashed, candidate);
+       return BCrypt.checkpw(hashed, candidate);
+        //return false;
     }
 
 

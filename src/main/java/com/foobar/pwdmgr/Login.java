@@ -3,20 +3,22 @@ package com.foobar.pwdmgr;
 /**
  * Created by alisaarnold on 2/12/17.
  */
+
 public class Login {
-    private final int userId;
+    private final User user;
     private final String website;
     private String loginUsername;
     private String loginPswd;
 
-    public Login(int userId,String website, String loginUserName, String loginPswd){
-        this.userId = userId;
+    public Login(User user,String website, String loginUserName, String loginPswd){
+        this.user = user;
         this.website = website;
         this.loginUsername = loginUserName;
         this.loginPswd = loginPswd;
     }
 
-    public int getUserId() { return userId;}
+
+    public int getUserId() { return user.getID();}
 
     public String getWebsite(){
         return website;
@@ -35,7 +37,11 @@ public class Login {
         this.loginPswd = loginPswd;
     }
 
-  /*  @Override
+    public User getUser() {
+        return user;
+    }
+
+    /*  @Override
     public String toString() {
         return "User{" +
                 "userName='" + userName + '\'' +

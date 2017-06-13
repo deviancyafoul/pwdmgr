@@ -34,20 +34,19 @@ public class Database {
     }
 
 
-    public void addLogin(Login login){
+  public void addLogin(Login login){
         try (Connection conn = DriverManager.getConnection(JDBC_URL,connectionProps)){
-            /*String userName = login.getUserName();*/
             PreparedStatement stmt = conn.prepareStatement("INSERT into public.user_passwords (user_id,site_name,username, password) values (?,?,?,?)");
-            /*PreparedStatement id = conn.prepareStatement("SELECT id FROM public.users WHERE username = ?");
-            id.setString(1,userName);
+            PreparedStatement id = conn.prepareStatement("SELECT id FROM public.users WHERE username = ?");
+            id.setString(1,login.getUser().getUserName());
             ResultSet rs = id.executeQuery();
-            if(rs.next()) {*/
-                stmt.setInt(1, login.getUserId()/*rs.getInt(1)*/);
+            if(rs.next()) {
+                stmt.setInt(1, rs.getInt(1));
                 stmt.setString(2, login.getWebsite());
                 stmt.setString(3, login.getLoginUserName());
                 stmt.setString(4, login.getLoginPswd());
                 stmt.executeUpdate();
-           /* }*/
+            }
         } catch(SQLException e){
             e.printStackTrace();
             System.exit(1);
