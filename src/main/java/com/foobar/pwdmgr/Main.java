@@ -27,35 +27,45 @@ public class Main {
     }
 
     private static String doAuthenticate(Database database, Scanner keyboard) {
-        String answer;
+        String answer = "";
         System.out.println("Please enter your username");
         String userName = keyboard.nextLine();
         System.out.println("Please enter your password");
         String password = keyboard.nextLine();
+        int attempts = 3;
         Optional<User> user = database.authenticate(userName, password);
-        while(!user.isPresent()){
+        while(!user.isPresent() && --attempts > 0){
+            user = database.authenticate(userName, password);
+            System.out.println("Sorry. Either the username or password you entered is incorrect.\nPlease try again.\nAttempts remaining: " + attempts);
             System.out.println("Please enter your username");
             userName = keyboard.nextLine();
             System.out.println("Please enter your password");
             password = keyboard.nextLine();
-            user = database.authenticate(userName, password);
         }
-        System.out.println("Authenticated");
-        return siteSearch(database, keyboard, user);
+        if(attempts == 0){
+            System.out.println("Sorry. We were not able to authenticate you;");
+            return answer;
+        } else {
+            System.out.println("Authenticated");
+            return siteSearch(database, keyboard, user);
+        }
     }
 
     private static String siteSearch(Database database, Scanner keyboard, Optional<User> user) {
         String answer;
+        String answer2 = "";
         System.out.println("Press 1 for Site Search.\nPress 2 for New Site.\nPress 3 to Logout.");
         answer = keyboard.nextLine();
-        while(!"1".equals(answer) && !"2".equals(answer) && "3".equals(answer)){
+        while(!"1".equals(answer) && !"2".equals(answer) && !"3".equals(answer)){
             System.out.println("Press 1 for Site Search.\nPress 2 for New Site.\nPress 3 to Logout");
             answer = keyboard.nextLine();
         }
         if("2".equals(answer)){
             createNewSite(database, keyboard, user.get());
+        } else if ("3".equals(answer)){
+            System.out.println("Logged out.");
         }
-        return answer;
+        return answer2;
     }
 
     private static void createNewSite(Database database, Scanner keyboard, User currentUser) {
@@ -67,7 +77,7 @@ public class Main {
         System.out.println("Please enter the password:");
         String loginPswd = keyboard.nextLine();
         Login newLogin = new Login(currentUser, website, loginUserName, loginPswd);
-        //database.addLogin(newLogin);
+        database.addLogin(newLogin);
     }
 
     private static void createUser(Database database, Scanner keyboard) {
