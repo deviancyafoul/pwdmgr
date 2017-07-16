@@ -1,9 +1,12 @@
 package com.foobar.pwdmgr;
 
 
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.sql.*;
 import java.util.Optional;
 import java.util.Properties;
+import java.awt.*;
 
 
 /**
@@ -51,6 +54,35 @@ public class Database {
             e.printStackTrace();
             System.exit(1);
         }
+
+    }
+
+    public  String searchLogin(String website){
+        //String[] username = new String [3];
+        String username = "";
+        String password = "";
+        String site = website;
+        try (Connection conn = DriverManager.getConnection(JDBC_URL,connectionProps)){
+            PreparedStatement stmt = conn.prepareStatement("select user_passwords.* from user_passwords, users where user_passwords.user_id = users.id and user_passwords.site_name = ?");
+            //PreparedStatement id = conn.prepareStatement("SELECT id FROM public.users WHERE username = ?");
+            //id.setString(1,site);
+            stmt.setString(1, website);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()) {
+               username = rs.getString("username") + "\n" + rs.getString("password");
+                //username[0] = rs.getString("username");
+                //username[1] = rs.getString("password");
+                //username[2] = rs.getString("site_name");
+                password = rs.getString("password");
+                StringSelection selection = new StringSelection(password);
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(selection, selection);
+            }
+        } catch(SQLException e){
+            e.printStackTrace();
+            System.exit(10);
+        }
+        return username;
 
     }
 

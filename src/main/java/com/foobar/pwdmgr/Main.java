@@ -60,7 +60,9 @@ public class Main {
             System.out.println("Press 1 for Site Search.\nPress 2 for New Site.\nPress 3 to Logout");
             answer = keyboard.nextLine();
         }
-        if("2".equals(answer)){
+        if("1".equals(answer)){
+          searchSite(database, keyboard, user.get());
+        } else if("2".equals(answer)){
             createNewSite(database, keyboard, user.get());
         } else if ("3".equals(answer)){
             System.out.println("Logged out.");
@@ -85,9 +87,19 @@ public class Main {
         String userName = keyboard.nextLine();
         System.out.println("Please create a password");
         String password = keyboard.nextLine();
-
         User newUser = new User(userName, password);
         database.addUser(newUser);
+    }
+
+    private static void searchSite (Database database, Scanner keyboard, User currentUser) {
+        System.out.println("Please enter a website to lookup");
+        String website = keyboard.nextLine();
+        System.out.println("Please enter your password to view website login information");
+        String password = keyboard.nextLine();
+        Optional<User> user = database.authenticate(currentUser.getUserName(), password);
+        if(user.isPresent()) {
+            System.out.println(database.searchLogin(website));
+        }
     }
 
     private static String getUserSelection(Scanner keyboard) {
