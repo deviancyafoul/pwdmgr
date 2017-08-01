@@ -1,12 +1,11 @@
 package com.foobar.pwdmgr;
 
 
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
-import java.awt.*;
 
 
 /**
@@ -57,32 +56,22 @@ public class Database {
 
     }
 
-    public  String searchLogin(String website){
-        //String[] username = new String [3];
-        String username = "";
-        String password = "";
-        String site = website;
+    public List<UserPassword> searchLogin(String website, User user){
+        List<UserPassword> result = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(JDBC_URL,connectionProps)){
-            PreparedStatement stmt = conn.prepareStatement("select user_passwords.* from user_passwords, users where user_passwords.user_id = users.id and user_passwords.site_name = ?");
-            //PreparedStatement id = conn.prepareStatement("SELECT id FROM public.users WHERE username = ?");
-            //id.setString(1,site);
-            stmt.setString(1, website);
+            PreparedStatement stmt = conn.prepareStatement("select user_passwords.* from user_passwords where user_passwords.site_name like ? and user_id = ?");
+            stmt.setString(1, website + "%");
+            stmt.setInt(2, user.getID());
             ResultSet rs = stmt.executeQuery();
-            if(rs.next()) {
-               username = rs.getString("username") + "\n" + rs.getString("password");
-                //username[0] = rs.getString("username");
-                //username[1] = rs.getString("password");
-                //username[2] = rs.getString("site_name");
-                password = rs.getString("password");
-                StringSelection selection = new StringSelection(password);
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                clipboard.setContents(selection, selection);
+            while(rs.next()) {
+                result.add(new UserPassword(rs.getInt("user_id"),rs.getString("site_name"),rs.getString("username"), rs.getString("password")));
+
             }
         } catch(SQLException e){
             e.printStackTrace();
             System.exit(10);
         }
-        return username;
+        return result;
 
     }
 
@@ -130,5 +119,6 @@ public class Database {
         }
         return Optional.empty();
     }
+
 }
 

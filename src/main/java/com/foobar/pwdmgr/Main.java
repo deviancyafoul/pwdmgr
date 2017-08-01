@@ -2,6 +2,7 @@ package com.foobar.pwdmgr;
 
 import com.foobar.pwdmgr.Database;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -98,7 +99,22 @@ public class Main {
         String password = keyboard.nextLine();
         Optional<User> user = database.authenticate(currentUser.getUserName(), password);
         if(user.isPresent()) {
-            System.out.println(database.searchLogin(website));
+            List<UserPassword> userPasswords = database.searchLogin(website, user.get());
+            if(userPasswords.size() > 1){
+                System.out.println("Your search results have returned more than one criteria.\nWhich website would you like the password for?");
+                System.out.println(userPasswords);
+                String specificSite = keyboard.nextLine();
+                Optional<UserPassword> userPassword = userPasswords.stream().filter(pass -> pass.getSiteName().equalsIgnoreCase(specificSite)).findFirst();
+                if(userPassword.isPresent()){
+                    UserPassword result = userPassword.get();
+                    System.out.println(result);
+                    ClipboardUtils.addToClipboard(result.getUserName(),result.getPassword());
+                }
+            } else {
+                UserPassword result = userPasswords.get(0);
+                System.out.println(result);
+                ClipboardUtils.addToClipboard(result.getUserName(),result.getPassword());
+            }
         }
     }
 
