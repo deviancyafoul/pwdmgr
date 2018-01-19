@@ -51,7 +51,7 @@ public class UserPassword {
     @Override
     public String toString() {
         return
-                "siteName='" + siteName + '\'' +
-                ", userName='" + userName;
+                "siteName='" + siteName + "'" +
+                ", userName='" + userName + "'";
     }
 }

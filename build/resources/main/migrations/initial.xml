@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <changeSet id = "1" author = "infoalisaa">
+        <createTable tableName = "users">
+            <column name = "id" type = "serial">
+                <constraints nullable = "false" unique = "true"/>
+            </column>
+            <column name = "username" type = "varchar"/>
+            <column name = "password" type = "varchar"/>
+        </createTable>
+        <createTable tableName="user_passwords">
+            <column name = "user_id" type = "bigint"/>
+            <column name = "site_name" type = "varchar"/>
+            <column name = "username" type = "varchar"/>
+            <column name = "password" type = "varchar"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames = "user_id"
+                                 baseTableName = "user_passwords"
+                                 constraintName = "fk_user_id"
+                                 onDelete = "CASCADE"
+                                 referencedColumnNames = "id"
+                                 referencedTableName = "users"/>
+    </changeSet>
+</databaseChangeLog>

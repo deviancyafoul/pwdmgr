@@ -67,6 +67,7 @@ public class Database {
                 result.add(new UserPassword(rs.getInt("user_id"),rs.getString("site_name"),rs.getString("username"), rs.getString("password")));
 
             }
+            conn.close();
         } catch(SQLException e){
             e.printStackTrace();
             System.exit(10);

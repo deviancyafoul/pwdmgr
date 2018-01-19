@@ -2,6 +2,7 @@ package com.foobar.pwdmgr;
 
 import com.foobar.pwdmgr.Database;
 
+import java.awt.datatransfer.StringSelection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -11,7 +12,7 @@ import java.util.Scanner;
  */
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Database database = new Database();
         Scanner keyboard = new Scanner(System.in);
         String answer = getUserSelection(keyboard);
@@ -27,7 +28,7 @@ public class Main {
 
     }
 
-    private static String doAuthenticate(Database database, Scanner keyboard) {
+    private static String doAuthenticate(Database database, Scanner keyboard) throws InterruptedException {
         String answer = "";
         System.out.println("Please enter your username");
         String userName = keyboard.nextLine();
@@ -35,6 +36,7 @@ public class Main {
         String password = keyboard.nextLine();
         int attempts = 3;
         Optional<User> user = database.authenticate(userName, password);
+
         while(!user.isPresent() && --attempts > 0){
             user = database.authenticate(userName, password);
             System.out.println("Sorry. Either the username or password you entered is incorrect.\nPlease try again.\nAttempts remaining: " + attempts);
@@ -52,7 +54,7 @@ public class Main {
         }
     }
 
-    private static String siteSearch(Database database, Scanner keyboard, Optional<User> user) {
+    private static String siteSearch(Database database, Scanner keyboard, Optional<User> user) throws InterruptedException {
         String answer;
         String answer2 = "";
         System.out.println("Press 1 for Site Search.\nPress 2 for New Site.\nPress 3 to Logout.");
@@ -92,9 +94,18 @@ public class Main {
         database.addUser(newUser);
     }
 
-    private static void searchSite (Database database, Scanner keyboard, User currentUser) {
+    private static void searchSite (Database database, Scanner keyboard, User currentUser) throws InterruptedException {
         System.out.println("Please enter a website to lookup");
         String website = keyboard.nextLine();
+        User userId = currentUser;
+        List<UserPassword> list = database.searchLogin(website,userId);
+        if(list.isEmpty()){
+            System.out.println("The website name entered could not be found.\nPlease enter a website to lookup.");
+        }
+
+    }
+
+    private static void searchSiteResults (String website, Database database, Scanner keyboard, User currentUser) throws InterruptedException {
         System.out.println("Please enter your password to view website login information");
         String password = keyboard.nextLine();
         Optional<User> user = database.authenticate(currentUser.getUserName(), password);
@@ -109,6 +120,7 @@ public class Main {
                     UserPassword result = userPassword.get();
                     System.out.println(result);
                     ClipboardUtils.addToClipboard(result.getUserName(),result.getPassword());
+
                 }
             } else {
                 UserPassword result = userPasswords.get(0);
@@ -117,6 +129,8 @@ public class Main {
             }
         }
     }
+
+
 
     private static String getUserSelection(Scanner keyboard) {
         String  answer;
